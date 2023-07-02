@@ -18,7 +18,6 @@ export default class HomeController {
           },
         }
       );
-      console.log(response.status);
       const photos = response.data.photos.photo;
 
       // Extract the data from the response and format it
