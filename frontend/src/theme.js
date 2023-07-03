@@ -4,6 +4,7 @@ export const colorTokens = {
     0: "#FFFFFF",
     100: "#FAFAFA",
     200: "#F5F5F5",
+    300: "#A1A1A1",
     1000: "#000000",
   },
   primary: {
@@ -26,6 +27,7 @@ export const themeSettings = (mode) => {
             },
             neutral: {
               text: colorTokens.grey[1000],
+              subtitle: colorTokens.grey[300],
               hover: colorTokens.grey[200],
             },
             background: {
@@ -40,6 +42,7 @@ export const themeSettings = (mode) => {
             },
             neutral: {
               text: colorTokens.grey[0],
+              subtitle: colorTokens.grey[300],
               hover: colorTokens.grey[200],
             },
             background: {

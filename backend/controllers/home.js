@@ -18,6 +18,7 @@ export default class HomeController {
           },
         }
       );
+
       const photos = response.data.photos.photo;
 
       // Extract the data from the response and format it

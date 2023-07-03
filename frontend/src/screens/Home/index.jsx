@@ -5,6 +5,7 @@ import {
   Drawer,
   Divider,
   TextField,
+  LinearProgress,
   useTheme,
 } from "@mui/material";
 import {
@@ -13,13 +14,14 @@ import {
   LogoutOutlined,
   StarOutline,
 } from "@mui/icons-material";
-
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import ImageListView from "../../components/ImageListView.jsx";
 
 const Home = () => {
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState("");
   const [isNavBarOpen, setIsNavBarOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
 
@@ -27,21 +29,29 @@ const Home = () => {
   const themeBlue = theme.palette.primary.light;
   const menuBg = theme.palette.background.menu;
   const hoverCol = theme.palette.neutral.hover;
+  const subtitleCol = theme.palette.neutral.subtitle;
 
   const onSearch = async (tags) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/home/search?tags=${tags}`
-      );
-      const data = await response.json();
-      console.log(data);
-      setImages(data);
-    } catch (error) {
-      console.error("Error:", error);
+    if (tags && tags.length > 0) {
+      try {
+        setLoading(true);
+
+        const response = await fetch(
+          `http://localhost:5000/api/home/search?tags=${tags}`
+        );
+        const data = await response.json();
+
+        setImages(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error:", error);
+        setLoading(false);
+      }
     }
   };
 
   const handleSubmit = (e) => {
+    setImages([]);
     e.preventDefault();
     onSearch(tags);
   };
@@ -81,7 +91,7 @@ const Home = () => {
                 onChange={(e) => setTags(e.target.value)}
                 value={tags}
                 InputProps={{
-                  disableUnderline: true,
+                  // disableUnderline: true,
                   sx: {
                     width: "100%",
                     fontSize: "40px",
@@ -177,8 +187,30 @@ const Home = () => {
         </Box>
       </Drawer>
 
-      <Box p="1.5rem 3rem" width="75%">
-        <ImageListView images={images} />
+      <LinearProgress />
+
+      <Box width="100%">
+        {loading ? (
+          <LinearProgress />
+        ) : images && images.length > 0 ? (
+          <ImageListView images={images} />
+        ) : (
+          <Box
+            height="90vh"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box textAlign="center" pb="1rem">
+              <SentimentVeryDissatisfiedIcon
+                sx={{ fontSize: "50px", color: subtitleCol }}
+              />
+              <Typography fontSize="24px" color={subtitleCol} pt="1rem">
+                No match was found
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Box>
     </Box>
   );
