@@ -16,14 +16,18 @@ import {
 } from "@mui/icons-material";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import ImageListView from "../../components/ImageListView.jsx";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState("");
   const [isNavBarOpen, setIsNavBarOpen] = useState(true);
   const [loading, setLoading] = useState(false);
+  const { _id, email } = useSelector((state) => state.user);
 
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const themeRed = theme.palette.primary.main;
   const themeBlue = theme.palette.primary.light;
@@ -140,7 +144,7 @@ const Home = () => {
             >
               <PersonOutlineOutlined sx={{ fontSize: "18px" }} />
               <Typography fontWeight="bold" fontSize="15px" pl="0.75rem">
-                philippeyong
+                {email}
               </Typography>
             </Box>
 
@@ -160,7 +164,7 @@ const Home = () => {
             >
               <StarOutline sx={{ fontSize: "18px" }} />
               <Typography fontWeight="500" fontSize="15px" pl="0.75rem">
-                favourite
+                favourites
               </Typography>
             </Box>
 
@@ -176,7 +180,7 @@ const Home = () => {
                   backgroundColor: hoverCol,
                 },
               }}
-              onClick={() => {}}
+              onClick={() => navigate(`/auth`)}
             >
               <LogoutOutlined sx={{ fontSize: "18px" }} />
               <Typography fontWeight="500" fontSize="15px" pl="0.75rem">

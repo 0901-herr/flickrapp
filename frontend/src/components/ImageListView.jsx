@@ -7,9 +7,9 @@ const ImageListView = ({ images }) => {
       display="flex"
       justifyContent="left"
       flexWrap="wrap"
-      gap="0.6rem"
+      gap="0.75rem"
       ml="0.5rem"
-      p="1rem"
+      p="2rem"
     >
       {images &&
         images.length > 0 &&
@@ -17,11 +17,9 @@ const ImageListView = ({ images }) => {
           <Box
             key={image.id}
             sx={{
-              // width: "150px",
               height: "160px",
               borderRadius: "12px",
               overflow: "hidden",
-              // paddingRight: "0.5rem",
             }}
           >
             <img
