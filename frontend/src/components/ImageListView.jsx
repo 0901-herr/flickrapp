@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 
 const ImageListView = ({ images }) => {
   return (
-    <div>
+    <Box>
       {images.map((image) => (
-        <img key={image.id} src={image.url} alt={image.title} />
+        <img
+          height="150"
+          key={image.id}
+          src={image.url}
+          alt={image.title}
+          style={{
+            objectFit: "cover",
+            borderRadius: "12px",
+            paddingRight: "0.5rem",
+          }}
+        />
       ))}
-    </div>
+    </Box>
   );
 };
 

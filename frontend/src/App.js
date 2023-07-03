@@ -1,30 +1,25 @@
-import React, { useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { useMemo } from "react";
+// import { useSelector } from "react-redux";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
+import { themeSettings } from "./theme";
 import Home from "./screens/Home/index.jsx";
-import ImageListView from "./components/ImageListView.jsx";
+
+const queryClient = new QueryClient();
 
 const App = () => {
-  const [images, setImages] = useState([]);
-
-  const handleSearch = async (tags) => {
-    console.log("searching:", tags);
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/home/search?tags=${tags}`
-      );
-      const data = await response.json();
-      console.log(data);
-      setImages(data);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  // const mode = useSelector((state) => state.mode);
+  const theme = useMemo(() => createTheme(themeSettings()), []);
 
   return (
     <div>
-      <h1>Image Search</h1>
-      <Home onSearch={handleSearch} />
-      <ImageListView images={images} />
+      <QueryClientProvider client={queryClient} contextSharing={true}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Home />
+        </ThemeProvider>
+      </QueryClientProvider>
     </div>
   );
 };
