@@ -3,7 +3,7 @@ import axios from "axios";
 export default class HomeController {
   static async apiGetImages(req, res) {
     try {
-      const { tags } = req.query; // Get the tags parameter from the request query
+      const { tags, page, per_page } = req.query;
 
       // Make a request to the Flickr API
       const response = await axios.get(
@@ -15,11 +15,14 @@ export default class HomeController {
             tags: tags,
             format: "json",
             nojsoncallback: 1,
+            page: page,
+            per_page: per_page,
           },
         }
       );
 
       const photos = response.data.photos.photo;
+      const totalItems = parseInt(response.data.photos.total, 10);
 
       // Extract the data from the response and format it
       const formattedPhotos = photos.map((photo) => ({
@@ -27,7 +30,8 @@ export default class HomeController {
         title: photo.title,
         url: `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`,
       }));
-      res.json(formattedPhotos); // Send the formatted photos as the response
+
+      res.json({ images: formattedPhotos, totalItems }); // Send the formatted photos and total items as the response
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ error: "An error occurred" });

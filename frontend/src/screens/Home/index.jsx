@@ -24,10 +24,15 @@ const Home = () => {
   const [tags, setTags] = useState("");
   const [isNavBarOpen, setIsNavBarOpen] = useState(true);
   const [loading, setLoading] = useState(false);
-  const { _id, email } = useSelector((state) => state.user);
+  const { email } = useSelector((state) => state.user);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   const theme = useTheme();
   const navigate = useNavigate();
+  const limit = 100; // Number of items per page
 
   const themeRed = theme.palette.primary.main;
   const themeBlue = theme.palette.primary.light;
@@ -35,17 +40,23 @@ const Home = () => {
   const hoverCol = theme.palette.neutral.hover;
   const subtitleCol = theme.palette.neutral.subtitle;
 
-  const onSearch = async (tags) => {
+  const onSearch = async (tags, page = 1, tagChange = false) => {
     if (tags && tags.length > 0) {
       try {
         setLoading(true);
-
         const response = await fetch(
-          `http://localhost:5000/api/home/search?tags=${tags}`
+          `http://localhost:5000/api/home/search?tags=${tags}&page=${page}&per_page=${limit}`
         );
         const data = await response.json();
 
-        setImages(data);
+        setImages(data.images);
+        console.log(data);
+
+        if (tagChange) {
+          setTotalItems(data.totalItems);
+          setTotalPages(Math.ceil(data.totalItems / limit));
+        }
+
         setLoading(false);
       } catch (error) {
         console.error("Error:", error);
@@ -55,9 +66,24 @@ const Home = () => {
   };
 
   const handleSubmit = (e) => {
-    setImages([]);
+    setImages(null);
+    setTotalPages(0);
+    setTotalItems(0);
+    setCurrentPage(1);
     e.preventDefault();
-    onSearch(tags);
+    onSearch(tags, 1, true);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    onSearch(tags, page, false);
+  };
+
+  const imageListViewProps = {
+    images,
+    currentPage,
+    totalPages,
+    handlePageChange,
   };
 
   return (
@@ -95,7 +121,6 @@ const Home = () => {
                 onChange={(e) => setTags(e.target.value)}
                 value={tags}
                 InputProps={{
-                  // disableUnderline: true,
                   sx: {
                     width: "100%",
                     fontSize: "40px",
@@ -127,6 +152,9 @@ const Home = () => {
               onClick={handleSubmit}
             >
               <Search sx={{ color: "white", fontSize: "24px" }} />
+              <Typography pl="0.5rem" color="white" fontWeight="bold">
+                search
+              </Typography>
             </Box>
           </Box>
 
@@ -194,10 +222,10 @@ const Home = () => {
       <LinearProgress />
 
       <Box width="100%">
-        {loading ? (
-          <LinearProgress />
-        ) : images && images.length > 0 ? (
-          <ImageListView images={images} />
+        <Box height="10px">{loading && <LinearProgress />}</Box>
+
+        {images && images.length > 0 ? (
+          <ImageListView {...imageListViewProps} />
         ) : (
           <Box
             height="90vh"
