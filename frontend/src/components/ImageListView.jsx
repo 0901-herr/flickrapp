@@ -30,7 +30,7 @@ const ImageListView = (props) => {
               key={image.id}
               sx={{
                 height: "160px",
-                borderRadius: "12px",
+                borderRadius: "10px",
                 overflow: "hidden",
               }}
             >

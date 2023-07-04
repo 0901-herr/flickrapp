@@ -32,7 +32,7 @@ const Home = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
-  const limit = 100; // Number of items per page
+  const limit = 150; // Number of items per page
 
   const themeRed = theme.palette.primary.main;
   const themeBlue = theme.palette.primary.light;
@@ -136,12 +136,13 @@ const Home = () => {
 
             {/* Button */}
             <Box
-              width="90%"
-              height="48px"
+              width="100%"
+              m="2rem 0"
+              p="0.8rem"
               display="flex"
               alignItems="center"
               justifyContent="center"
-              borderRadius="12px"
+              borderRadius="5px"
               sx={{
                 background: `linear-gradient(to bottom right, ${themeRed}, ${themeBlue})`,
                 "&:hover": {
@@ -152,7 +153,7 @@ const Home = () => {
               onClick={handleSubmit}
             >
               <Search sx={{ color: "white", fontSize: "24px" }} />
-              <Typography pl="0.5rem" color="white" fontWeight="bold">
+              <Typography pl="0.5rem" color="white">
                 search
               </Typography>
             </Box>

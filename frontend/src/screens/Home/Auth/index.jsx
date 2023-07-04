@@ -1,14 +1,41 @@
 import * as React from "react";
 import { useState } from "react";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
+import { Dialog } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Divider, useTheme } from "@mui/material";
-import { WavingHand, AppRegistration } from "@mui/icons-material";
+import { WavingHand, AppRegistration, ErrorOutline } from "@mui/icons-material";
 import { setLogin } from "../../../state/index.js";
 import { useDispatch } from "react-redux";
+
+const FlyInDialog = ({ message, onClose }) => {
+  const [open, setOpen] = useState(true);
+
+  const handleClose = () => {
+    setOpen(false);
+    onClose();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{ sx: { position: "absolute", top: 16, right: 16 } }}
+    >
+      <Box width="340px" p="1.5rem">
+        <ErrorOutline sx={{ fontSize: "26px" }} />
+        <Typography fontSize="18px" fontWeight="bold">
+          {message}
+        </Typography>
+        <Typography fontSize="14px">
+          Please try again with another email or password
+        </Typography>
+      </Box>
+    </Dialog>
+  );
+};
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -16,16 +43,18 @@ export default function Auth() {
   const dispatch = useDispatch();
   const [pageType, setPageType] = useState("login");
 
-  const primaryBlue = theme.palette.primary.light;
-  const primaryRed = theme.palette.primary.main;
+  const themeBlue = theme.palette.primary.light;
+  const themeRed = theme.palette.primary.main;
 
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const register = async (onSubmitProps) => {
+  const register = async () => {
     const requestData = {
       email: email,
       password: password,
@@ -52,7 +81,7 @@ export default function Auth() {
     }
   };
 
-  const login = async (onSubmitProps) => {
+  const login = async () => {
     const requestData = {
       email: email,
       password: password,
@@ -70,7 +99,7 @@ export default function Auth() {
 
       const loggedIn = await loggedInResponse.json();
 
-      if (loggedIn) {
+      if (loggedInResponse.ok) {
         dispatch(
           setLogin({
             user: loggedIn.user,
@@ -78,19 +107,35 @@ export default function Auth() {
           })
         );
         navigate("/");
+      } else {
+        console.log(loggedIn.msg);
+        setErrorMessage(loggedIn.msg);
+        handleInvalidCredentials();
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const handleFormSubmit = async (values, onSubmitProps) => {
-    if (isLogin) await login(onSubmitProps);
-    if (isRegister) await register(onSubmitProps);
+  const handleFormSubmit = async (values) => {
+    if (isLogin) await login();
+    if (isRegister) await register();
+  };
+
+  const handleInvalidCredentials = () => {
+    setShowDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setShowDialog(false);
   };
 
   return (
     <Container component="main" maxWidth="xs">
+      {showDialog && (
+        <FlyInDialog message={errorMessage} onClose={handleCloseDialog} />
+      )}
+
       <Box m="6rem 0" display="flex" flexDirection="column" alignItems="center">
         {isRegister && (
           <Box
@@ -99,15 +144,15 @@ export default function Auth() {
             justifyContent="center"
             alignItems="center"
           >
+            <AppRegistration sx={{ fontSize: "26px" }} />
             <Typography
               fontSize="26px"
               variant="h5"
               fontWeight="bold"
-              pr="0.5rem"
+              pl="0.75rem"
             >
               Register
             </Typography>
-            <AppRegistration sx={{ fontSize: "26px" }} />
           </Box>
         )}
 
@@ -118,15 +163,15 @@ export default function Auth() {
             justifyContent="center"
             alignItems="center"
           >
+            <WavingHand sx={{ fontSize: "26px" }} />
             <Typography
               fontSize="26px"
               variant="h5"
               fontWeight="bold"
-              pr="0.5rem"
+              pl="0.75rem"
             >
               Login
             </Typography>
-            <WavingHand sx={{ fontSize: "26px" }} />
           </Box>
         )}
 
@@ -142,11 +187,11 @@ export default function Auth() {
             sx={{
               "& .MuiOutlinedInput-root": {
                 "&.Mui-focused fieldset": {
-                  borderColor: primaryRed,
+                  borderColor: themeRed,
                 },
               },
               "& label.Mui-focused": {
-                color: primaryRed,
+                color: themeRed,
               },
             }}
           />
@@ -161,29 +206,36 @@ export default function Auth() {
             sx={{
               "& .MuiOutlinedInput-root": {
                 "&.Mui-focused fieldset": {
-                  borderColor: primaryRed,
+                  borderColor: themeRed,
                 },
               },
               "& label.Mui-focused": {
-                color: primaryRed,
+                color: themeRed,
               },
             }}
           />
 
-          <Button
-            fullWidth
-            type="submit"
+          <Box
+            width="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius="5px"
+            m="2rem 0"
+            p="1rem"
             sx={{
-              m: "2rem 0",
-              p: "1rem",
-              background: primaryRed,
-              color: "white",
-              "&:hover": { color: primaryRed },
+              background: `linear-gradient(to bottom right, ${themeRed}, ${themeBlue})`,
+              "&:hover": {
+                cursor: "pointer",
+                background: `linear-gradient(to bottom right, ${themeBlue}, ${themeRed})`,
+              },
             }}
             onClick={handleFormSubmit}
           >
-            Continue
-          </Button>
+            <Typography color="white" fontSize="14px">
+              CONTINUE
+            </Typography>
+          </Box>
 
           <Divider
             sx={{
@@ -200,7 +252,7 @@ export default function Auth() {
                 sx={{
                   textDecoration: "none",
                   "&:hover": {
-                    color: primaryRed,
+                    color: themeRed,
                     cursor: "pointer",
                   },
                 }}
@@ -220,12 +272,11 @@ export default function Auth() {
                     },
                   }}
                   onClick={() => {
-                    // resetForm();
                     setPageType("register");
                   }}
                 >
                   Don't have an account?{" "}
-                  <span style={{ color: primaryRed }}>Register</span>
+                  <span style={{ color: themeRed }}>Register</span>
                 </Typography>
               )}
               {isRegister && (
@@ -244,7 +295,7 @@ export default function Auth() {
                   }}
                 >
                   Already have an account?{" "}
-                  <span style={{ color: primaryRed }}>Login</span>
+                  <span style={{ color: themeRed }}>Login</span>
                 </Typography>
               )}{" "}
             </Grid>
