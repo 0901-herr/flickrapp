@@ -21,7 +21,9 @@ export default class HomeController {
         }
       );
 
+      // Getting the photos
       const photos = response.data.photos.photo;
+      // Calculate total items present in the response
       const totalItems = parseInt(response.data.photos.total, 10);
 
       // Extract the data from the response and format it

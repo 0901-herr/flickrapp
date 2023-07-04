@@ -6,13 +6,18 @@ export default class AuthController {
   static async register(req, res) {
     try {
       const { email, password } = req.body;
+
+      // Hashing password
       const salt = await bcrypt.genSalt();
       const passwordHash = await bcrypt.hash(password, salt);
 
+      // Create new user
       const newUser = new User({
         email,
         password: passwordHash,
       });
+
+      // Add new user
       const savedUser = await newUser.save();
       res.status(201).json(savedUser);
     } catch (err) {
@@ -23,10 +28,13 @@ export default class AuthController {
   static async login(req, res) {
     try {
       const { email, password } = req.body;
+
+      // Search if user exist
       const user = await User.findOne({ email: email });
 
       if (!user) return res.status(400).json({ msg: "User does not exist" });
 
+      // Compare password to see if it matches
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {

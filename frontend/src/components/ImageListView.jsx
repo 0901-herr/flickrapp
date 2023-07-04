@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, Pagination } from "@mui/material";
 
 const ImageListView = (props) => {
-  const { images, currentPage, totalPages, handlePageChange } = props;
+  const { images, tags, currentPage, totalPages, handlePageChange } = props;
 
   return (
     <Box ml="0.5rem" m="2rem 3.5rem">
+      {/* Pagination bar */}
       <Box
         mb="2.5rem"
         display="flex"
@@ -15,13 +16,15 @@ const ImageListView = (props) => {
         <Typography fontSize="40px" fontWeight="bold">
           Search results
         </Typography>
+
         <Pagination
           count={totalPages}
-          color="primary"
           page={currentPage}
-          onChange={(event, page) => handlePageChange(page)}
+          onChange={(event, page) => handlePageChange(tags, page)}
         />
       </Box>
+
+      {/* Image list view */}
       <Box display="flex" justifyContent="left" flexWrap="wrap" gap="0.75rem">
         {images &&
           images.length > 0 &&

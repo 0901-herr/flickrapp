@@ -4,8 +4,8 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-import Home from "./screens/Home/index.jsx";
-import Auth from "./screens/Home/Auth";
+import HomeScreen from "./screens/Home";
+import AuthScreen from "./screens/Auth";
 
 const queryClient = new QueryClient();
 
@@ -21,12 +21,16 @@ const App = () => {
             <CssBaseline />
             <Routes>
               <Route
-                path="/auth"
-                element={isAuth ? <Auth /> : <Navigate to="/" />}
+                path={"/"}
+                element={isAuth ? <AuthScreen /> : <Navigate to="/" />}
               />
               <Route
-                path={"/" || "/home"}
-                element={isAuth ? <Home /> : <Navigate to="/" />}
+                path={"/auth"}
+                element={isAuth ? <AuthScreen /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/home"
+                element={isAuth ? <HomeScreen /> : <Navigate to="/" />}
               />
             </Routes>
           </ThemeProvider>

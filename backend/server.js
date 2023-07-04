@@ -5,7 +5,7 @@ import AuthController from "./controllers/auth.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use(express.json()); // Enable parsing of JSON data
 app.use(express.urlencoded({ extended: true })); // Enable parsing of URL-encoded data
 

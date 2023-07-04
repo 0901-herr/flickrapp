@@ -6,6 +6,7 @@ dotenv.config();
 
 const port = process.env.PORT || 8000; // Set the port number
 
+// Connect to database
 mongoose
   .connect(process.env.FLICKRAPP_DB_URI, {
     useNewUrlParser: true,
